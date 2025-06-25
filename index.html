@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La curva de Gauss y sus formas</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <header class="bg-blue-800 text-white p-6">
+    <h1 class="text-3xl font-bold">Curso Interactivo de Métodos Cuantitativos</h1>
+    <p class="text-sm">Desarrollado por el Dr. Mario A. Ramírez Barajas</p>
+  </header>
+
+  <main class="p-6">
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Módulo 1: La curva de Gauss y sus formas</h2>
+      <p class="mb-4">
+        La curva de Gauss, también conocida como distribución normal, es uno de los pilares de la estadística. Representa una distribución simétrica donde los valores se agrupan alrededor de una media y disminuyen hacia los extremos.
+      </p>
+      <div class="bg-white p-4 shadow rounded">
+        <h3 class="text-lg font-semibold">🎓 Explicación académica</h3>
+        <p class="mb-2">
+          La distribución normal se define matemáticamente por su función de densidad. Su forma característica de campana es simétrica respecto a la media, que coincide con la mediana y la moda. Su ecuación está controlada por dos parámetros: la media (&mu;) y la desviación estándar (&sigma;).
+        </p>
+        <h3 class="text-lg font-semibold mt-4">🎲 Metáfora lúdica</h3>
+        <p>
+          Imagina que estás en un parque lleno de gente. En el centro está el vendedor de helados (la media), donde se agrupa la mayoría. Conforme te alejas, hay menos personas... y más probabilidades de encontrar silencio o sorpresas: eso son las colas de la curva.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-10">
+      <h3 class="text-xl font-semibold mb-2">🔬 Explora la forma de la curva</h3>
+      <p>Modifica los parámetros y observa cómo cambia la forma de la curva:</p>
+      <div class="flex items-center mt-4 space-x-4">
+        <label>Media (μ): <input type="range" id="media" min="-5" max="5" step="0.1" value="0" /></label>
+        <label>Desviación estándar (σ): <input type="range" id="desviacion" min="0.5" max="3" step="0.1" value="1" /></label>
+      </div>
+      <canvas id="curvaGauss" class="mt-6 bg-white rounded shadow" height="300"></canvas>
+    </section>
+  </main>
+
+  <footer class="bg-blue-800 text-white text-center p-4">
+    <p>© 2025 Dr. Mario A. Ramírez Barajas | Todos los derechos reservados</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('curvaGauss').getContext('2d');
+    let media = 0;
+    let desviacion = 1;
+
+    function calcularCurva(mu, sigma) {
+      const x = [], y = [];
+      for (let i = -10; i <= 10; i += 0.1) {
+        x.push(i);
+        const exponent = -Math.pow(i - mu, 2) / (2 * Math.pow(sigma, 2));
+        y.push((1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(exponent));
+      }
+      return { x, y };
+    }
+
+    let datos = calcularCurva(media, desviacion);
+    let grafica = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: datos.x,
+        datasets: [{
+          label: 'Distribución Normal',
+          data: datos.y,
+          fill: false,
+          borderColor: 'rgba(59, 130, 246, 1)',
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: { title: { display: true, text: 'Valores' } }, y: { title: { display: true, text: 'Densidad' } } }
+      }
+    });
+
+    document.getElementById('media').addEventListener('input', e => {
+      media = parseFloat(e.target.value);
+      actualizar();
+    });
+    document.getElementById('desviacion').addEventListener('input', e => {
+      desviacion = parseFloat(e.target.value);
+      actualizar();
+    });
+
+    function actualizar() {
+      const nuevosDatos = calcularCurva(media, desviacion);
+      grafica.data.labels = nuevosDatos.x;
+      grafica.data.datasets[0].data = nuevosDatos.y;
+      grafica.update();
+    }
+  </script>
+</body>
+</html>
