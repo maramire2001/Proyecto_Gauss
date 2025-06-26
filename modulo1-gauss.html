@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 1: Curva de Gauss</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans flex">
+
+  <!-- Sidebar Dashboard -->
+  <aside class="w-64 h-screen bg-blue-900 text-white flex flex-col fixed">
+    <div class="p-6 font-bold text-xl border-b border-blue-700">
+      Dr. Mario A. Ramírez Barajas
+    </div>
+    <nav class="flex-1 overflow-y-auto">
+      <ul class="p-4 space-y-2">
+        <li><a href="index.html" class="hover:text-yellow-300">🏠 Inicio</a></li>
+        <li><a href="modulo1-gauss.html" class="text-yellow-300 font-semibold">📊 Módulo 1: Curva de Gauss</a></li>
+        <li><a href="modulo2-descriptiva.html" class="hover:text-yellow-300">📐 Módulo 2: Estadística Descriptiva</a></li>
+        <li><a href="modulo3-inferencial.html" class="hover:text-yellow-300">🧪 Módulo 3: Inferencial</a></li>
+        <li><a href="modulo4-muestra.html" class="hover:text-yellow-300">👥 Módulo 4: Población y Muestra</a></li>
+        <li><a href="modulo5-probabilidad.html" class="hover:text-yellow-300">🧬 Módulo 5: Probabilidad</a></li>
+        <li><a href="modulo6-parametricas.html" class="hover:text-yellow-300">📊 Módulo 6: Pruebas Paramétricas</a></li>
+        <li><a href="modulo7-noparametricas.html" class="hover:text-yellow-300">📈 Módulo 7: No Paramétricas</a></li>
+        <li><a href="modulo8-avanzadas.html" class="hover:text-yellow-300">🎲 Módulo 8: Aplicaciones Avanzadas</a></li>
+        <li class="border-t border-blue-700 pt-2"><a href="premium-metodologia.html" class="hover:text-yellow-300">🎓 Diagnóstico Metodológico (Premium)</a></li>
+      </ul>
+    </nav>
+    <footer class="p-4 text-sm text-center border-t border-blue-700">
+      © 2025 Dr. Mario A. Ramírez Barajas
+    </footer>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="ml-64 p-10 flex-1">
+    <h1 class="text-2xl font-bold mb-4">📊 Módulo 1: La curva de Gauss y sus formas</h1>
+
+    <section class="mb-8 bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-semibold mb-2">🎓 Explicación académica</h2>
+      <p>
+        La distribución normal o curva de Gauss representa la forma en la que muchos fenómenos naturales se distribuyen. Es simétrica respecto a su media (&mu;), y su forma está determinada también por la desviación estándar (&sigma;), que indica la dispersión de los datos.
+      </p>
+    </section>
+
+    <section class="mb-8 bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-semibold mb-2">🎲 Metáfora lúdica</h2>
+      <p>
+        Imagina una pista de aterrizaje donde los aviones tienden a aterrizar en el centro (la media), pero algunos se desvían un poco hacia los lados. Mientras más lejos aterriza un avión, menos frecuente es. Así se comporta la curva de Gauss.
+      </p>
+    </section>
+
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-semibold mb-4">🔬 Interactúa con la curva</h2>
+      <p class="mb-4">Modifica los parámetros de la media (&mu;) y la desviación estándar (&sigma;) para ver cómo cambia la forma de la curva:</p>
+      <div class="flex flex-wrap items-center gap-6 mb-6">
+        <label>Media (μ): <input type="range" id="media" min="-5" max="5" step="0.1" value="0" /></label>
+        <label>Desviación estándar (σ): <input type="range" id="desviacion" min="0.5" max="3" step="0.1" value="1" /></label>
+      </div>
+      <canvas id="curvaGauss" height="300" class="bg-gray-100 rounded shadow"></canvas>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('curvaGauss').getContext('2d');
+    let media = 0;
+    let desviacion = 1;
+
+    function calcularCurva(mu, sigma) {
+      const x = [], y = [];
+      for (let i = -10; i <= 10; i += 0.1) {
+        x.push(i);
+        const exponent = -Math.pow(i - mu, 2) / (2 * Math.pow(sigma, 2));
+        y.push((1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(exponent));
+      }
+      return { x, y };
+    }
+
+    let datos = calcularCurva(media, desviacion);
+    let grafica = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: datos.x,
+        datasets: [{
+          label: 'Distribución Normal',
+          data: datos.y,
+          borderColor: 'rgba(59, 130, 246, 1)',
+          tension: 0.1,
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { title: { display: true, text: 'Valores' } },
+          y: { title: { display: true, text: 'Densidad' } }
+        }
+      }
+    });
+
+    document.getElementById('media').addEventListener('input', e => {
+      media = parseFloat(e.target.value);
+      actualizar();
+    });
+
+    document.getElementById('desviacion').addEventListener('input', e => {
+      desviacion = parseFloat(e.target.value);
+      actualizar();
+    });
+
+    function actualizar() {
+      const nuevosDatos = calcularCurva(media, desviacion);
+      grafica.data.labels = nuevosDatos.x;
+      grafica.data.datasets[0].data = nuevosDatos.y;
+      grafica.update();
+    }
+  </script>
+</body>
+</html>
